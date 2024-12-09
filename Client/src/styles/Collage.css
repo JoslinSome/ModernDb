@@ -1,0 +1,87 @@
+.collage-container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.collage-scroll {
+    display: flex;
+    animation: scroll-left 20s linear infinite;
+}
+.collage-image {
+    width: 15vw;
+    height: 100vh;
+    object-fit: cover;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 1;
+}
+
+.text-container {
+    text-align: center;
+    max-width: 600px;
+    padding: 20px;
+    margin-top: -10vw;
+}
+.row{
+    display: flex;
+    flex-direction: row;
+}
+.option{
+    padding: 30px;
+    margin-top: 20px;
+}
+.popUp{
+    background-color: #ffff;
+    width: 65vw;
+    height: 50vh;
+    border-radius: 30px;
+    color: black;
+    text-align: center;
+
+}
+.text-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.text-container p {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.start-quiz-btn {
+    background-color: #61dafb;
+    color: black;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.start-quiz-btn:hover {
+    background-color: #21a1f1;
+    color: white;
+}
