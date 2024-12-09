@@ -1,6 +1,13 @@
 from math import sqrt
 import pandas as pd
 from pymongo import MongoClient
+import re
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+SEARCH_ENGINE_ID =  os.getenv("SEARCH_ENGINE_ID")
 
 def load_data(csv_file_path, db_name='personality', collection_name='prediction', batch_size=1000, mongo_host='localhost', mongo_port=27017):
     client = MongoClient(mongo_host, mongo_port)
@@ -54,3 +61,36 @@ def find_closest_personality(prediction_collection, introversion_score, sensing_
             closest_personality = person["Personality"]
     
     return closest_personality, personalities_checked
+
+def transform_url(url):
+    match = re.search(r'/profile_images/(\d+)\.png', url)
+    if match:
+        profile_id = match.group(1)
+        new_url = f"https://www.personality-database.com/profile/{profile_id}"
+        return new_url
+    else:
+        raise ValueError("The provided URL does not match the expected format.")
+
+def search_character_image(character_name):
+    url = "https://www.googleapis.com/customsearch/v1"
+    params = {
+        "q": character_name,
+        "cx": SEARCH_ENGINE_ID,
+        "key": API_KEY,
+        "searchType": "image",
+        "num": 1,
+    }
+
+    response = requests.get(url, params=params, verify=False)
+    if response.status_code == 200:
+        data = response.json()
+        if "items" in data:
+            image_url = data["items"][0]["link"]
+            print(f"Image URL for {character_name}: {image_url}")
+            return image_url
+        else:
+            print("No images found.")
+            return None
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+        return None
