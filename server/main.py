@@ -7,10 +7,9 @@ from character_func import *
 client = MongoClient("localhost", 27017)
 db = client.personality
 
-load_data("server/mbti.csv", collection_name="prediction")
-load_data("server/movie_char.csv", collection_name="characters")
-store_random_mbti_questions('server/mbti_questions.json', 5)
-print(get_random_mbti_questions()['J/P'])
+upload_data(20)
+
+print(get_random_mbti_questions())
 
 prediction_collection = db.prediction
 character_collection = db.characters

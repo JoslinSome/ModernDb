@@ -15,7 +15,12 @@ SEARCH_ENGINE_ID =  os.getenv("SEARCH_ENGINE_ID")
 
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
-def store_random_mbti_questions(json_file, num_questions_from_each_category=5):
+def upload_data(num_mbti_questions=16):
+    load_data("../Data/mbti.csv", collection_name="prediction")
+    load_data("../Data/movie_char.csv", collection_name="characters")
+    store_random_mbti_questions('../Data/mbti_questions.json', int(num_mbti_questions/4))
+
+def store_random_mbti_questions(json_file, num_questions_from_each_category):
     redis_client.flushdb()
 
     with open(json_file, 'r') as file:
