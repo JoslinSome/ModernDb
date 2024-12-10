@@ -5,10 +5,38 @@ import re
 import os
 from dotenv import load_dotenv
 import requests
+import redis
+import json
+import random
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
 SEARCH_ENGINE_ID =  os.getenv("SEARCH_ENGINE_ID")
+
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+
+def store_random_mbti_questions(json_file, num_questions_from_each_category=5):
+    redis_client.flushdb()
+
+    with open(json_file, 'r') as file:
+        data = json.load(file)
+
+    for category, questions in data.items():
+        selected_questions = random.sample(questions, num_questions_from_each_category)
+
+        for question in selected_questions:
+            redis_client.lpush(category, question)
+
+def get_random_mbti_questions():
+    random_questions = {}
+
+    categories = redis_client.keys('*')
+
+    for category in categories:
+        stored_questions = redis_client.lrange(category, 0, -1)
+        random_questions[category] = stored_questions
+
+    return random_questions
 
 def load_data(csv_file_path, db_name='personality', collection_name='prediction', batch_size=1000, mongo_host='localhost', mongo_port=27017):
     client = MongoClient(mongo_host, mongo_port)
