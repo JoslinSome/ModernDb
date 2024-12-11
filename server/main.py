@@ -7,7 +7,7 @@ from character_func import *
 client = MongoClient("localhost", 27017)
 db = client.personality
 
-upload_data(20)
+# upload_data(20)
 
 print(get_random_mbti_questions())
 

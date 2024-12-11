@@ -1,24 +1,79 @@
-import React, { useState } from "react";
-import questionsData from "../assets/mbti_questions_50_each.json"; // Adjust the path to your JSON file
+import React, {useEffect, useState} from "react";
+import questionsData from "../assets/mbti_questions_50_each.json";
 import "../styles/Quiz.css";
-import {useLocation} from "react-router-dom"; // Optional: Add custom styles
+import {useLocation} from "react-router-dom";
+import axios from "axios";
 
 const Quiz = ({}) => {
-    const allQuestions = Object.entries(questionsData).flatMap(([category, questions]) =>
+    const [questions, setQuestions] = useState({})
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const questionAmount = searchParams.get("questions") || 0;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.post("http://127.0.0.1:5000/get-question-set", {
+                    num_questions: questionAmount/4,
+                });
+                setQuestions(response.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchData();
+    }, []);
+    const allQuestions = Object.entries(questions).flatMap(([category, questions]) =>
         questions.map((question) => ({ question, category }))
     );
     function getXQuestions(amount) {
         const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
         return shuffled.slice(0, amount);
     }
+    const responseToPoints = {
+        1: 0,
+        2: 2.5,
+        3: 5,
+        4: 7.5,
+        5: 10,
+    };
+    const EIresponseToPoints = {
+        5: 0,
+        4: 2.5,
+        3: 5,
+        2: 7.5,
+        1: 10,
+    };
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState({});
     const currentQuestion = allQuestions[currentQuestionIndex];
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const questionAmount = searchParams.get("questions") || 0;
     const selectedQuestions = getXQuestions(questionAmount)
 
+    const calculateRunningAverages = (answers) => {
+        const runningSums = {};
+        const questionCounts = {};
+        // Iterate through user answers
+        for (const key in answers) {
+            const { category, value } = answers[key];
+            const points = responseToPoints[value];
+            if (!runningSums[category]) {
+                runningSums[category] = 0;
+                questionCounts[category] = 0;
+            }
+            if(category==="E/I"){
+                runningSums[category] += EIresponseToPoints[value];
+            }
+            else {
+                runningSums[category] += points;
+            }
+            questionCounts[category] += 1;
+        }
+        const averages = {};
+        for (const category in runningSums) {
+            averages[category] = runningSums[category] / questionCounts[category];
+        }
+        return averages;
+    };
     const handleAnswer = (value) => {
         setAnswers((prev) => ({
             ...prev,
@@ -39,8 +94,12 @@ const Quiz = ({}) => {
     };
 
     // Submit Handler
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        const averages = calculateRunningAverages(answers);
+        const response = await axios.post("http://127.0.0.1:5000/find-closest-personality", averages);
+        console.log("Response:", response.data);
         console.log("User Answers:", answers);
+        console.log("Averages:", averages);
         alert("Quiz Submitted! Check the console for answers.");
     };
 
@@ -50,7 +109,7 @@ const Quiz = ({}) => {
 
             <div className="question-box">
                 <h2>{`Question ${currentQuestionIndex + 1} of ${selectedQuestions.length}`}</h2>
-                <p>{currentQuestion.question}</p>
+                <p>{currentQuestion && currentQuestion.question}</p>
             </div>
 
             <div className="answer-options">
