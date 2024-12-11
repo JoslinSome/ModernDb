@@ -1,3 +1,5 @@
 /client/package-lock.json
 /client/node_modules
 /server/.env
+Server/__pycache__/character_func.cpython-310.pyc
+Server/__pycache__/mbti_func.cpython-310.pyc

@@ -15,22 +15,48 @@ SEARCH_ENGINE_ID =  os.getenv("SEARCH_ENGINE_ID")
 
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
-def upload_data(num_mbti_questions=16):
-    load_data("Server/Data/mbti.csv", collection_name="prediction")
-    load_data("Server/Data/movie_char.csv", collection_name="characters")
-    store_random_mbti_questions('Server/Data/mbti_questions.json', int(num_mbti_questions/4))
+client = MongoClient('localhost', 27017)
+db = client['personality']
 
-def store_random_mbti_questions(json_file, num_questions_from_each_category):
+def upload_data(num_mbti_questions=16):
+    load_csv_data("Server/Data/mbti.csv", collection_name="prediction")
+    load_csv_data("Server/Data/movie_char.csv", collection_name="characters")
+    load_question_data("Server/Data/mbti_questions.json")
+    store_random_mbti_questions(int(num_mbti_questions/4))
+
+def load_question_data(json_file_path, collection_name='questions', batch_size=1000):
+    if collection_name in db.list_collection_names():
+        print(f"The collection '{collection_name}' already exists. Exiting without inserting data.")
+        return
+
+    collection = db[collection_name]
+    
+    df = pd.read_json(json_file_path)
+    
+    data = df.to_dict(orient='records')
+    
+    total_records = len(data)
+    for i in range(0, total_records, batch_size):
+        batch = data[i:i+batch_size]
+        try:
+            collection.insert_many(batch)
+        except Exception as e:
+            print(f"Error inserting batch starting at index {i}: {e}")
+    
+    print(f"Successfully inserted data into {collection_name} collection.")
+
+def store_random_mbti_questions(num_questions_from_each_category, collection_name='questions'):
     redis_client.flushdb()
 
-    with open(json_file, 'r') as file:
-        data = json.load(file)
+    collection = db[collection_name]
 
-    for category, questions in data.items():
-        selected_questions = random.sample(questions, num_questions_from_each_category)
-
-        for question in selected_questions:
-            redis_client.lpush(category, question)
+    pipeline = [{"$sample": {"size": num_questions_from_each_category}}]
+    selected_questions = list(collection.aggregate(pipeline))
+    
+    for question in selected_questions:
+        for category, text in question.items():
+            if category != '_id':
+                redis_client.lpush(category, text)
 
 def get_random_mbti_questions():
     random_questions = {}
@@ -43,10 +69,7 @@ def get_random_mbti_questions():
 
     return random_questions
 
-def load_data(csv_file_path, db_name='personality', collection_name='prediction', batch_size=1000, mongo_host='localhost', mongo_port=27017):
-    client = MongoClient(mongo_host, mongo_port)
-    db = client[db_name]
-
+def load_csv_data(csv_file_path, collection_name='prediction', batch_size=1000):
     if collection_name in db.list_collection_names():
         print(f"The collection '{collection_name}' already exists. Exiting without inserting data.")
         return

@@ -7,13 +7,12 @@ from character_func import *
 client = MongoClient("localhost", 27017)
 db = client.personality
 
-# upload_data(20)
+upload_data(20)
 
 print(get_random_mbti_questions())
 
 prediction_collection = db.prediction
 character_collection = db.characters
-
 
 introversion_score = 5.678
 sensing_score = 2.890
