@@ -9,16 +9,15 @@ CORS(app, supports_credentials=True)
 @app.route("/get-question-set", methods=["POST"])
 def question_set():
     num_questions = request.json.get("num_questions", None)
-    print(num_questions)
+    print(num_questions,"Hello")
     if num_questions is None:
         return {"error": "Missing 'num_questions' in request"}, 400
-    store_random_mbti_questions('../Data/mbti_questions.json', num_questions)
+    store_random_mbti_questions( num_questions)
 
     return get_random_mbti_questions()
 
 @app.route("/find-closest-personality", methods=["POST"])
 def closest_personality():
-    # Parse input JSON
     input_data = request.json
     introversion_score = input_data.get("E/I", 0)
     sensing_score = input_data.get("S/N", 0)
@@ -41,6 +40,11 @@ def closest_personality():
         "personalities_checked": personalities_checked,
         "similar_characters": similar_characters
     })
+@app.route("/get-image", methods=["POST"])
+def get_character_image():
+    name = request.json.get("name", None)
+    movie = request.json.get("movie", None)
+    return jsonify({"image_url": search_character_image(name,movie)})
 
 if __name__ == "__main__":
     app.run(debug=True)

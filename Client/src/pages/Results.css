@@ -1,0 +1,144 @@
+/* Results.css */
+
+.results-container {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #e6f7ff, #cce7ff);
+    padding: 40px 20px;
+    text-align: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+.results-title {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #007BFF, #00C6FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+.mbti-type-container {
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin-bottom: 30px;
+}
+
+.mbti-heading {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #007BFF;
+    margin-bottom: 15px;
+}
+
+.mbti-descriptions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mbti-letter-description {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #555;
+    background: #f9f9f9;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.mbti-letter {
+    font-weight: 600;
+    color: #007BFF;
+    margin-right: 8px;
+}
+
+.mbti-text {
+    font-style: italic;
+}
+
+.character-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.character-image {
+    margin-bottom: 15px;
+}
+
+.character-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #007BFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.character-details {
+    text-align: left;
+    width: 100%;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.character-role {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #007BFF;
+    margin-bottom: 10px;
+}
+
+.character-details p {
+    font-size: 1rem;
+    color: #444;
+    margin: 5px 0;
+}
+
+.character-details p strong {
+    color: #007BFF;
+}
+
+.back-button {
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+@media (min-width: 768px) {
+    .character-card {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .character-image {
+        margin-right: 20px;
+    }
+
+    .character-details {
+        text-align: left;
+    }
+}

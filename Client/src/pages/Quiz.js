@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import questionsData from "../assets/mbti_questions_50_each.json";
 import "../styles/Quiz.css";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 const Quiz = ({}) => {
@@ -9,13 +9,16 @@ const Quiz = ({}) => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const questionAmount = searchParams.get("questions") || 0;
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {
             try {
+                console.log("Wmpanadas")
                 const response = await axios.post("http://127.0.0.1:5000/get-question-set", {
                     num_questions: questionAmount/4,
                 });
                 setQuestions(response.data);
+                console.log(response.data)
             } catch (err) {
                 console.error(err);
             }
@@ -100,6 +103,7 @@ const Quiz = ({}) => {
         console.log("Response:", response.data);
         console.log("User Answers:", answers);
         console.log("Averages:", averages);
+        navigate("/results", { state: { responseData: response.data } });
         alert("Quiz Submitted! Check the console for answers.");
     };
 

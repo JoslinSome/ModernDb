@@ -66,7 +66,7 @@ def get_random_mbti_questions():
     for category in categories:
         stored_questions = redis_client.lrange(category, 0, -1)
         random_questions[category] = stored_questions
-
+    print("E/I",len(random_questions["E/I"]),"Hello")
     return random_questions
 
 def load_csv_data(csv_file_path, collection_name='prediction', batch_size=1000):
@@ -128,10 +128,10 @@ def transform_url(url):
     else:
         raise ValueError("The provided URL does not match the expected format.")
 
-def search_character_image(character_name):
+def search_character_image(character_name, movie):
     url = "https://www.googleapis.com/customsearch/v1"
     params = {
-        "q": character_name,
+        "q": character_name + " "+movie,
         "cx": SEARCH_ENGINE_ID,
         "key": API_KEY,
         "searchType": "image",
