@@ -128,26 +128,44 @@ def transform_url(url):
     else:
         raise ValueError("The provided URL does not match the expected format.")
 
+
+import requests
+
+
 def search_character_image(character_name, movie):
     url = "https://www.googleapis.com/customsearch/v1"
     params = {
-        "q": character_name + " "+movie,
+        "q": f"{character_name} {movie}",
         "cx": SEARCH_ENGINE_ID,
         "key": API_KEY,
         "searchType": "image",
-        "num": 1,
+        "num": 2,
     }
 
-    response = requests.get(url, params=params, verify=False)
-    if response.status_code == 200:
-        data = response.json()
-        if "items" in data:
-            image_url = data["items"][0]["link"]
-            print(f"Image URL for {character_name}: {image_url}")
-            return image_url
+    try:
+        response = requests.get(url, params=params, verify=False)
+
+        if response.status_code == 200:
+            data = response.json()
+            if "items" in data:
+                filtered_images = [
+                    item["link"] for item in data["items"]
+                    if "static.wikia.nocookie.net" not in item["link"]
+                ]
+                if filtered_images:
+                    image_url = filtered_images[0]
+                    print(f"Filtered Image URL for {character_name}: {image_url}")
+                    return image_url
+                else:
+                    print("No valid images found after filtering.")
+                    return None
+            else:
+                print("No images found.")
+                return None
         else:
-            print("No images found.")
+            print(f"Error: {response.status_code} - {response.text}")
             return None
-    else:
-        print(f"Error: {response.status_code} - {response.text}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
         return None

@@ -3,6 +3,7 @@ from mbti_func import *
 from flask_cors import CORS
 from bson import ObjectId
 from main import get_characters_by_upvotes, prediction_collection, store_random_mbti_questions
+from character_func import get_personality_frequencies
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -45,6 +46,11 @@ def get_character_image():
     name = request.json.get("name", None)
     movie = request.json.get("movie", None)
     return jsonify({"image_url": search_character_image(name,movie)})
+
+@app.route("/get-stats", methods = ["GET"])
+def get_stats():
+    stats= get_personality_frequencies()
+    return jsonify({"stats": stats})
 
 if __name__ == "__main__":
     app.run(debug=True)

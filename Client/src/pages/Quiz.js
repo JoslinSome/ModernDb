@@ -55,7 +55,6 @@ const Quiz = ({}) => {
     const calculateRunningAverages = (answers) => {
         const runningSums = {};
         const questionCounts = {};
-        // Iterate through user answers
         for (const key in answers) {
             const { category, value } = answers[key];
             const points = responseToPoints[value];
@@ -96,7 +95,6 @@ const Quiz = ({}) => {
         }
     };
 
-    // Submit Handler
     const handleSubmit = async () => {
         const averages = calculateRunningAverages(answers);
         const response = await axios.post("http://127.0.0.1:5000/find-closest-personality", averages);
@@ -104,7 +102,7 @@ const Quiz = ({}) => {
         console.log("User Answers:", answers);
         console.log("Averages:", averages);
         navigate("/results", { state: { responseData: response.data } });
-        alert("Quiz Submitted! Check the console for answers.");
+        alert("Quiz Submitted!");
     };
 
     return (
