@@ -33,5 +33,7 @@ To run website,
   SEARCH_ENGINE_ID=14253724b9f354b07
 ```
 
+
 ### Without the api key the app will still work but results will have no image like so
-![Screenshot 2024-12-16 at 9.30.33 PM.png](..%2F..%2F..%2F..%2F..%2Fvar%2Ffolders%2F6n%2F5lbwzs7j2qq6bz2rhy3hphlm0000gn%2FT%2FTemporaryItems%2FNSIRD_screencaptureui_3BnYBY%2FScreenshot%202024-12-16%20at%209.30.33%20PM.png)
+
+<img width="799" alt="Screenshot 2024-12-16 at 9 37 27 PM" src="https://github.com/user-attachments/assets/4bb9b3e6-9102-42ae-b54c-e5f4676ea52c" />
