@@ -19,9 +19,9 @@ client = MongoClient('localhost', 27017)
 db = client['personality']
 
 def upload_data(num_mbti_questions=16):
-    load_csv_data("Server/Data/mbti.csv", collection_name="prediction")
-    load_csv_data("Server/Data/movie_char.csv", collection_name="characters")
-    load_question_data("Server/Data/mbti_questions.json")
+    load_csv_data("Data/mbti.csv", collection_name="prediction")
+    load_csv_data("Data/movie_char.csv", collection_name="characters")
+    load_question_data("Data/mbti_questions.json")
     store_random_mbti_questions(int(num_mbti_questions/4))
 
 def load_question_data(json_file_path, collection_name='questions', batch_size=1000):
