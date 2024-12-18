@@ -1,14 +1,11 @@
 from math import sqrt
 import pandas as pd
 import pymongo
-from pymongo import MongoClient
 import re
 import os
 from dotenv import load_dotenv
-import requests
 import redis
-import json
-import random
+
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
