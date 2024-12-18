@@ -2,15 +2,14 @@ from flask import Flask, jsonify, request
 from mbti_func import *
 from flask_cors import CORS
 from bson import ObjectId
-from main import get_characters_by_upvotes, prediction_collection, store_random_mbti_questions
-from character_func import get_personality_frequencies
-
+from character_func import get_personality_frequencies, get_characters_by_upvotes
+from mbti_func import prediction_collection, store_random_mbti_questions
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 @app.route("/get-question-set", methods=["POST"])
 def question_set():
     num_questions = request.json.get("num_questions", None)
-    print(num_questions,"Hello")
+    print("Getting questions")
     if num_questions is None:
         return {"error": "Missing 'num_questions' in request"}, 400
     store_random_mbti_questions( num_questions)

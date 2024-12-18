@@ -1,5 +1,6 @@
 from math import sqrt
 import pandas as pd
+import pymongo
 from pymongo import MongoClient
 import re
 import os
@@ -12,18 +13,46 @@ import random
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
 SEARCH_ENGINE_ID =  os.getenv("SEARCH_ENGINE_ID")
+DB_PWD = os.getenv("DB_PWD")
+# redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+client = None
+db = None
+prediction_collection = None
+character_collection = None
 
-client = MongoClient('localhost', 27017)
-db = client['personality']
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://saanbe16:"+DB_PWD+"@cluster0.whcpp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://default:iTYxhGq4VPjiRg7t3jagGXjMlJQckyo6@redis-16432.c114.us-east-1-4.ec2.redns.redis-cloud.com:16432")
+
+# Connect to Redis using the connection URL
+redis_client = redis.StrictRedis.from_url(REDIS_URL, decode_responses=True)
+
+# Test the connection
+try:
+    redis_client.ping()
+    print("Connected to Redis successfully!")
+except redis.exceptions.ConnectionError as e:
+    print(f"Failed to connect to Redis: {e}")
+
+try:
+    client = pymongo.MongoClient(MONGO_URI)
+    db = client["personality"]
+    prediction_collection = db.prediction
+    character_collection = db.characters
+    print("Connected to MongoDB successfully!")
+except pymongo.errors.ConnectionError as e:
+    print(f"Failed to connect to MongoDB: {e}")
+
 
 def upload_data(num_mbti_questions=16):
     load_csv_data("Data/mbti.csv", collection_name="prediction")
+    print("Loaded predictions")
     load_csv_data("Data/movie_char.csv", collection_name="characters")
+    print("Loaded Characters")
     load_question_data("Data/mbti_questions.json")
+    print("Loaded Questions")
     store_random_mbti_questions(int(num_mbti_questions/4))
-
 def load_question_data(json_file_path, collection_name='questions', batch_size=1000):
     if collection_name in db.list_collection_names():
         print(f"The collection '{collection_name}' already exists. Exiting without inserting data.")
@@ -169,3 +198,4 @@ def search_character_image(character_name, movie):
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
         return None
+upload_data()
