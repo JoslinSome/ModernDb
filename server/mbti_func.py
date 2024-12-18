@@ -15,7 +15,7 @@ API_KEY = os.getenv("API_KEY")
 SEARCH_ENGINE_ID =  os.getenv("SEARCH_ENGINE_ID")
 DB_PWD = os.getenv("DB_PWD")
 # redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
-
+REDIS_URL = os.getenv("REDIS_URL")
 client = None
 db = None
 prediction_collection = None
@@ -23,7 +23,7 @@ character_collection = None
 
 MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://saanbe16:"+DB_PWD+"@cluster0.whcpp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://default:iTYxhGq4VPjiRg7t3jagGXjMlJQckyo6@redis-16432.c114.us-east-1-4.ec2.redns.redis-cloud.com:16432")
+REDIS_URL = os.getenv("REDIS_URL", REDIS_URL)
 
 # Connect to Redis using the connection URL
 redis_client = redis.StrictRedis.from_url(REDIS_URL, decode_responses=True)
